@@ -28,28 +28,36 @@ namespace Week2_TaskManagement
                 var choice = Console.ReadLine();
 
                 Console.Clear();
-                switch (choice)
+
+                try
                 {
-                    case "1":
-                        await ShowAllTasksAsync();
-                        break;
-                    case "2":
-                        await ShowByIdTaskAsync();
-                        break;
-                    case "3":
-                        await AddNewTaskAsync();
-                        break;
-                    case "4":
-                        await CompleteTaskAsync();
-                        break;
-                    case "5":
-                        await DeleteTaskAsync();
-                        break;
-                    case "6":
-                        return;
-                    default:
-                        Console.WriteLine("Неверный выбор. Попробуйте снова");
-                        break;
+                    switch (choice)
+                    {
+                        case "1":
+                            await ShowAllTasksAsync();
+                            break;
+                        case "2":
+                            await ShowByIdTaskAsync();
+                            break;
+                        case "3":
+                            await AddNewTaskAsync();
+                            break;
+                        case "4":
+                            await CompleteTaskAsync();
+                            break;
+                        case "5":
+                            await DeleteTaskAsync();
+                            break;
+                        case "6":
+                            return;
+                        default:
+                            Console.WriteLine("Неверный выбор. Попробуйте снова");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка: {ex.Message}");
                 }
             }
         }
@@ -72,11 +80,9 @@ namespace Week2_TaskManagement
         private async Task ShowByIdTaskAsync()
         {
             int id = ReadTaskId();
-            var task = await _taskRepository.GetByIdAsync(id);
-            if (task != null)
-                DisplayTask(task);
-            else
-                Console.WriteLine("Задача не найдена");
+            var task = await _taskRepository.GetByIdAsync(id) ?? throw new InvalidOperationException("Задача с таким ID не найдена.");
+
+            DisplayTask(task);
         }
 
         private void DisplayTask(AppTask task)
@@ -95,10 +101,8 @@ namespace Week2_TaskManagement
             var title = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(title))
-            {
-                Console.WriteLine("Заголовок не может быть пустым");
-                return;
-            }
+                throw new ArgumentException("Заголовок не может быть пустым");
+
 
             Console.Write("Введите описание задачи: ");
             var description = Console.ReadLine();
@@ -111,37 +115,34 @@ namespace Week2_TaskManagement
         private async Task CompleteTaskAsync()
         {
             var id = ReadTaskId();
-            var task = await _taskRepository.GetByIdAsync(id);
-            if (task != null)
-            {
-                var updatedTask = task with { IsCompleted = true };
-                var success = await _taskRepository.UpdateTaskStatusAsync(updatedTask);
-                Console.WriteLine(success ? "Задача отмечена как завершенная" : "Не удалось обновить задачу");
-            }
-            else
-                Console.WriteLine("Задача не найдена");
+            var task = await _taskRepository.GetByIdAsync(id) ?? throw new InvalidOperationException("Задача не найдена");
+
+            var updatedTask = task with { IsCompleted = true };
+            var success = await _taskRepository.UpdateTaskStatusAsync(updatedTask);
+            if (!success)
+                throw new Exception("Не удалось обновить статус задачи");
+
+            Console.WriteLine("Задача отмечена как завершённая");
         }
 
         private async Task DeleteTaskAsync()
         {
             int id = ReadTaskId();
             var success = await _taskRepository.DeleteAsync(id);
-            Console.WriteLine(success ? "Задача удалена" : "Не удалось удалить задачу или задача не найдена");
+
+            if (!success)
+                throw new InvalidOperationException("Не удалось удалить задачу или она не найдена");
+
+            Console.WriteLine("Задача успешно удалена");
         }
 
         private int ReadTaskId()
         {
             Console.Write("Введите ID задачи: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Неверный ID");
-                return -1;
-            }
-            else
-            {
-                return id;
-            }
-        }
+                throw new ArgumentException("Неверный ID");
 
+            return id;
+        }
     }
 }
