@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Week2_TaskManagement.Data
 {
-    internal class SqlConnectionFactory : IDbConnectionFactory
+    public class SqlConnectionFactory : IDbConnectionFactory
     {
         private readonly string _connectionString;
 

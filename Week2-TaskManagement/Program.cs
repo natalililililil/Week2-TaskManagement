@@ -12,7 +12,7 @@ var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    throw new InvalidOperationException("Подключение с 'DefaultConnection' не найдено");
 }
 
 IDbConnectionFactory connectionFactory = new SqlConnectionFactory(connectionString);

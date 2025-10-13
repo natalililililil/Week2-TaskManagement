@@ -2,7 +2,7 @@
 
 namespace Week2_TaskManagement.Data
 {
-    internal interface IDbConnectionFactory
+    public interface IDbConnectionFactory
     {
         IDbConnection CreateConnection();
     }

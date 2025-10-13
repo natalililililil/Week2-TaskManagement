@@ -2,7 +2,7 @@
 
 namespace Week2_TaskManagement.Data
 {
-    internal interface ITaskRepository
+    public interface ITaskRepository
     {
         Task<int> AddAsync(AppTask task);
         Task<AppTask?> GetByIdAsync(int id);

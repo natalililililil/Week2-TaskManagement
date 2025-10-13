@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Week2_TaskManagement.Models
 {
-    internal record AppTask(
+    public record AppTask(
         int Id,
         string Title,
         string? Description,

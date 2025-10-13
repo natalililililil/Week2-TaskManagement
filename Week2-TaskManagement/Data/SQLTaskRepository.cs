@@ -3,7 +3,7 @@ using Week2_TaskManagement.Models;
 
 namespace Week2_TaskManagement.Data
 {
-    internal class SQLTaskRepository : ITaskRepository
+    public class SQLTaskRepository : ITaskRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
         public SQLTaskRepository(IDbConnectionFactory connectionFactory)

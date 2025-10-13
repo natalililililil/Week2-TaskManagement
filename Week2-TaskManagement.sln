@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week2-TaskManagement", "Week2-TaskManagement\Week2-TaskManagement.csproj", "{B7C32090-CEF2-4B71-B85D-6C96B651B5DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Week2-TaskManagement.Tests", "Week2-TaskManagement.Tests\Week2-TaskManagement.Tests.csproj", "{1B2B06EF-466C-4FD2-B882-028A75F93309}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B7C32090-CEF2-4B71-B85D-6C96B651B5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7C32090-CEF2-4B71-B85D-6C96B651B5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7C32090-CEF2-4B71-B85D-6C96B651B5DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B2B06EF-466C-4FD2-B882-028A75F93309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B2B06EF-466C-4FD2-B882-028A75F93309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B2B06EF-466C-4FD2-B882-028A75F93309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B2B06EF-466C-4FD2-B882-028A75F93309}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
