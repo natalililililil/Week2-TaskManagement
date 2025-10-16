@@ -8,7 +8,7 @@ namespace Week2_TaskManagement.Data
         private readonly IDbConnectionFactory _connectionFactory;
         public SQLTaskRepository(IDbConnectionFactory connectionFactory)
         {
-            _connectionFactory = connectionFactory ?? throw new ArgumentNullException("Отсутвует подключения к базе данных");
+            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory), "Отсутвует подключения к базе данных");
         }
         public async Task<int> AddAsync(AppTask task)
         {

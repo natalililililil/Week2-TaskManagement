@@ -1,15 +1,18 @@
 ﻿using Week2_TaskManagement.Data;
 using Week2_TaskManagement.Models;
+using Week2_TaskManagement.Validation;
 
 namespace Week2_TaskManagement
 {
     internal class Application
     {
         private readonly ITaskRepository _taskRepository;
+        private readonly ITaskValidator _validator;
 
-        public Application(ITaskRepository taskRepository)
+        public Application(ITaskRepository taskRepository, ITaskValidator validator)
         {
             _taskRepository = taskRepository;
+            _validator = validator;
         }
 
         public async Task RunAsync()
@@ -55,12 +58,20 @@ namespace Week2_TaskManagement
                             break;
                     }
                 }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Ошибка ввода: {ex.Message}");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Console.WriteLine($"Операция не может быть выполнена: {ex.Message}");
+                }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Ошибка: {ex.Message}");
+                    Console.WriteLine($"Непредвиденная ошибка: {ex.Message}");
                 }
             }
-        }
+        }      
 
         private async Task ShowAllTasksAsync()
         {
@@ -88,24 +99,17 @@ namespace Week2_TaskManagement
         private void DisplayTask(AppTask task)
         {
             string status = task.IsCompleted ? "Выполнено" : "Не завершено";
-            Console.WriteLine($"    [{task.Id}] {task.Title}");
-            Console.WriteLine($"    Описание: {task.Description}");
-            Console.WriteLine($"    Статус:   {status}");
-            Console.WriteLine($"    Создана:  {task.CreatedAt:dd.MM.yyyy HH:mm}");
+            Console.WriteLine($"\t[{task.Id}] {task.Title}");
+            Console.WriteLine($"\tОписание: {task.Description}");
+            Console.WriteLine($"\tСтатус: {status}");
+            Console.WriteLine($"\tСоздана: {task.CreatedAt:dd.MM.yyyy HH:mm}");
             Console.WriteLine();
         }
 
         private async Task AddNewTaskAsync()
         {
-            Console.Write("Введите заголовок задачи: ");
-            var title = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Заголовок не может быть пустым");
-
-
-            Console.Write("Введите описание задачи: ");
-            var description = Console.ReadLine();
+            string title = ReadValidatedString(_validator.ValidateTaskTitle, "Введите заголовок задачи: ");
+            string description = ReadValidatedString(_validator.ValidateTaskDescription, "Введите описание задачи: ");
 
             var newTask = new AppTask(0, title, description, false, DateTime.Now);
             var newId = await _taskRepository.AddAsync(newTask);
@@ -136,13 +140,38 @@ namespace Week2_TaskManagement
             Console.WriteLine("Задача успешно удалена");
         }
 
+        private string ReadValidatedString(Action<string> validateAction, string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                var input = Console.ReadLine();
+                try
+                {
+                    validateAction(input);
+                    return input;
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
         private int ReadTaskId()
         {
-            Console.Write("Введите ID задачи: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-                throw new ArgumentException("Неверный ID");
-
-            return id;
+            while (true)
+            {
+                Console.Write("Введите ID задачи: ");
+                string input = Console.ReadLine();
+                try
+                {
+                    return _validator.ValidateTaskId(input);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

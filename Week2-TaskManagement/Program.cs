@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Week2_TaskManagement;
 using Week2_TaskManagement.Data;
+using Week2_TaskManagement.Validation;
 
 try
 {
@@ -19,8 +20,9 @@ try
 
     IDbConnectionFactory connectionFactory = new SqlConnectionFactory(connectionString);
     ITaskRepository taskRepository = new SQLTaskRepository(connectionFactory);
+    ITaskValidator validator = new TaskValidator();
 
-    var app = new Application(taskRepository);
+    var app = new Application(taskRepository, validator);
     await app.RunAsync();
 }
 catch (Exception ex)

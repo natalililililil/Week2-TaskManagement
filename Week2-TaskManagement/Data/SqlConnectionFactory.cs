@@ -9,7 +9,10 @@ namespace Week2_TaskManagement.Data
 
         public SqlConnectionFactory(string connectionString)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException("Отсутвует строка подключения");
+            if (string.IsNullOrEmpty(connectionString))
+                throw new ArgumentException(nameof(connectionString), "Отсутвует строка подключения");
+
+            _connectionString = connectionString;
         }
         public IDbConnection CreateConnection()
         {
