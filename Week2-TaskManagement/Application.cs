@@ -71,7 +71,7 @@ namespace Week2_TaskManagement
                     Console.WriteLine($"Непредвиденная ошибка: {ex.Message}");
                 }
             }
-        }      
+        }
 
         private async Task ShowAllTasksAsync()
         {
@@ -108,8 +108,8 @@ namespace Week2_TaskManagement
 
         private async Task AddNewTaskAsync()
         {
-            string title = ReadValidatedString(_validator.ValidateTaskTitle, "Введите заголовок задачи: ");
-            string description = ReadValidatedString(_validator.ValidateTaskDescription, "Введите описание задачи: ");
+            string title = ReadValidatedString("Введите заголовок задачи: ", input => new AppTask(0, input, "temp", false, DateTime.Now));
+            string description = ReadValidatedString("Введите описание задачи: ", input => new AppTask(0, title, input, false, DateTime.Now));
 
             var newTask = new AppTask(0, title, description, false, DateTime.Now);
             var newId = await _taskRepository.AddAsync(newTask);
@@ -122,6 +122,8 @@ namespace Week2_TaskManagement
             var task = await _taskRepository.GetByIdAsync(id) ?? throw new InvalidOperationException("Задача не найдена");
 
             var updatedTask = task with { IsCompleted = true };
+            _validator.ValidateForUpdate(updatedTask);
+
             var success = await _taskRepository.UpdateTaskStatusAsync(updatedTask);
             if (!success)
                 throw new Exception("Не удалось обновить статус задачи");
@@ -132,15 +134,19 @@ namespace Week2_TaskManagement
         private async Task DeleteTaskAsync()
         {
             int id = ReadTaskId();
-            var success = await _taskRepository.DeleteAsync(id);
+            var task = await _taskRepository.GetByIdAsync(id)
+                       ?? throw new InvalidOperationException("Задача не найдена");
 
+            _validator.ValidateForUpdate(task);
+
+            var success = await _taskRepository.DeleteAsync(id);
             if (!success)
                 throw new InvalidOperationException("Не удалось удалить задачу или она не найдена");
 
             Console.WriteLine("Задача успешно удалена");
         }
 
-        private string ReadValidatedString(Action<string> validateAction, string prompt)
+        private string ReadValidatedString(string prompt, Func<string, AppTask> createTaskForValidation)
         {
             while (true)
             {
@@ -148,7 +154,8 @@ namespace Week2_TaskManagement
                 var input = Console.ReadLine();
                 try
                 {
-                    validateAction(input);
+                    var task = createTaskForValidation(input);
+                    _validator.ValidateForInsert(task);
                     return input;
                 }
                 catch (ArgumentException ex)
@@ -157,6 +164,7 @@ namespace Week2_TaskManagement
                 }
             }
         }
+
         private int ReadTaskId()
         {
             while (true)
