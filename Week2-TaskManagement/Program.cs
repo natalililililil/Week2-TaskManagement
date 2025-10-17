@@ -19,8 +19,8 @@ try
     }
 
     IDbConnectionFactory connectionFactory = new SqlConnectionFactory(connectionString);
+    ITaskRepository taskRepository = new SQLTaskRepository(connectionFactory);
     ITaskValidator validator = new TaskValidator();
-    ITaskRepository taskRepository = new SQLTaskRepository(connectionFactory, validator);
 
     var app = new Application(taskRepository, validator);
     await app.RunAsync();

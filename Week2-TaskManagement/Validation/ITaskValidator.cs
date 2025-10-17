@@ -1,11 +1,9 @@
-﻿using Week2_TaskManagement.Models;
-
-namespace Week2_TaskManagement.Validation
+﻿namespace Week2_TaskManagement.Validation
 {
     public interface ITaskValidator
     {
-        void ValidateForInsert(AppTask task);
-        void ValidateForUpdate(AppTask task);
+        void ValidateTaskTitle(string title);
+        void ValidateTaskDescription(string description);
         int ValidateTaskId(string input);
     }
 }

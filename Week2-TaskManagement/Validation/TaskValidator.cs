@@ -1,53 +1,34 @@
-﻿using Week2_TaskManagement.Models;
-
-namespace Week2_TaskManagement.Validation
+﻿namespace Week2_TaskManagement.Validation
 {
     public class TaskValidator : ITaskValidator
     {
         private const int MaxTitleLength = 100;
         private const int MaxDescriptionLength = 500;
 
-        public void ValidateForInsert(AppTask task)
+        public void ValidateTaskTitle(string title)
         {
-            ValidateTaskFields(task);
+            ValidateNonEmpty(title, MaxTitleLength, "Заголовок");
         }
 
-        public void ValidateForUpdate(AppTask task)
+        public void ValidateTaskDescription(string description)
         {
-            if (task.Id <= 0)
-                throw new ArgumentException("ID задачи должен быть положительным числом");
-
-            ValidateTaskFields(task);
+            ValidateNonEmpty(description, MaxDescriptionLength, "Описание");
         }
 
         public int ValidateTaskId(string input)
         {
-            if (string.IsNullOrWhiteSpace(input))
-                throw new ArgumentException("ID задачи не может быть пустым");
-
             if (!int.TryParse(input, out int id))
-                throw new ArgumentException("Неверный ID задачи");
-
-            if (id <= 0)
-                throw new ArgumentException("ID задачи должен быть положительным числом");
+                throw new ArgumentException("Неверный ID");
 
             return id;
         }
 
-        private void ValidateTaskFields(AppTask task)
+        private void ValidateNonEmpty(string value, int maxLength, string fieldName)
         {
-            if (task == null)
-                throw new ArgumentNullException(nameof(task), "Задача не может быть null");
-
-            if (string.IsNullOrWhiteSpace(task.Title))
-                throw new ArgumentException("Заголовок задачи не может быть пустым");
-            if (task.Title.Length > MaxTitleLength)
-                throw new ArgumentException($"Заголовок не может быть длиннее {MaxTitleLength} символов");
-
-            if (string.IsNullOrWhiteSpace(task.Description))
-                throw new ArgumentException("Описание задачи не может быть пустым");
-            if (task.Description.Length > MaxDescriptionLength)
-                throw new ArgumentException($"Описание не может быть длиннее {MaxDescriptionLength} символов");
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException($"{fieldName} не может быть пустым");
+            if (value.Length > maxLength)
+                throw new ArgumentException($"{fieldName} не может быть длиннее {maxLength} символов");
         }
     }
 }
