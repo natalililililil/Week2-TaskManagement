@@ -28,7 +28,7 @@ namespace Week2_TaskManagement
                 Console.WriteLine("5. Удалить задачу");
                 Console.WriteLine("6. Выход");
                 Console.Write("Выберите действие: ");
-                var choice = Console.ReadLine();
+                var choice = Console.ReadLine()?.Trim();
 
                 Console.Clear();
 
